@@ -1,0 +1,14 @@
+{
+  "name": "kahawa-mkononi",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:api": "npm -w backend run dev",
+    "dev:web": "npm -w frontend run start",
+    "dev": "npm run dev:api & npm run dev:web"
+  }
+}
+

@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kahawa_mkononi_db
+    environment:
+      POSTGRES_DB: kahawa_mkononi
+      POSTGRES_USER: kahawa
+      POSTGRES_PASSWORD: kahawa_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - kahawa_mkononi_db_data:/var/lib/postgresql/data
+volumes:
+  kahawa_mkononi_db_data:
+

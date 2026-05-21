@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kahawa_mkononi_db
+    environment:
+      POSTGRES_DB: kahawa_mkononi
+      POSTGRES_USER: kahawa
+      POSTGRES_PASSWORD: kahawa_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - kahawa_mkononi_db_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./backend
+    container_name: kahawa_mkononi_api
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://kahawa:kahawa_password@db:5432/kahawa_mkononi?schema=public
+      JWT_ACCESS_SECRET: CHANGE_ME_ACCESS_SECRET
+      JWT_REFRESH_SECRET: CHANGE_ME_REFRESH_SECRET
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_TTL: 30d
+      CORS_ORIGINS: http://localhost:8080
+    ports:
+      - "4000:4000"
+    command: ["sh", "-c", "npx prisma db push && node dist/src/index.js"]
+    depends_on:
+      - db
+
+  web:
+    build:
+      context: ./frontend
+    container_name: kahawa_mkononi_web
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  kahawa_mkononi_db_data:
