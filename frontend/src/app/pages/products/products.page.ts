@@ -85,7 +85,7 @@ function absUrl(url: string | null | undefined) {
                   </button>
                   <button class="btn danger" *ngIf="p.isActive" (click)="openDeactivate(p)" [disabled]="saving()">
                     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 7h2v9h-2v-9Zm4 0h2v9h-2v-9ZM7 10h2v9H7v-9ZM6 8h12l-1 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8Z"/></svg>
-                    {{ "Remove" | t }}
+                    {{ "Delete" | t }}
                   </button>
                   <button class="btn" *ngIf="!p.isActive" (click)="reactivate(p)" [disabled]="saving()">
                     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6a6 6 0 0 1-6 6 6 6 0 0 1-5.65-4H4.26A8 8 0 0 0 12 20a8 8 0 0 0 0-16Z"/></svg>
@@ -162,7 +162,7 @@ function absUrl(url: string | null | undefined) {
 
       <div class="overlay" *ngIf="deactivateTarget() as p">
         <div class="dialog card">
-          <div class="title">{{ "Remove product?" | t }}</div>
+          <div class="title">{{ "Delete product?" | t }}</div>
           <div class="sub">{{ "This will hide the product from customers" | t }}</div>
           <div class="mini">
             <div><b>{{ p.name }}</b></div>
@@ -175,7 +175,7 @@ function absUrl(url: string | null | undefined) {
             </button>
             <button class="btn danger" (click)="deactivate(p)" [disabled]="saving()">
               <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 7h2v9h-2v-9Zm4 0h2v9h-2v-9ZM7 10h2v9H7v-9ZM6 8h12l-1 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8Z"/></svg>
-              {{ "Remove" | t }}
+              {{ "Delete" | t }}
             </button>
           </div>
         </div>

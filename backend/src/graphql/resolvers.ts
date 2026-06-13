@@ -87,6 +87,12 @@ async function getCustomerForUserOrThrow(userId: string) {
 }
 
 const BRANDING_LOGO_KEY = "BRANDING_LOGO_URL";
+const APP_LATEST_VERSION_KEY = "APP_LATEST_VERSION";
+const APP_LATEST_BUILD_NUMBER_KEY = "APP_LATEST_BUILD_NUMBER";
+const APP_MIN_SUPPORTED_BUILD_NUMBER_KEY = "APP_MIN_SUPPORTED_BUILD_NUMBER";
+const APP_UPDATE_REQUIRED_KEY = "APP_UPDATE_REQUIRED";
+const APP_DOWNLOAD_URL_KEY = "APP_DOWNLOAD_URL";
+const APP_RELEASE_NOTES_KEY = "APP_RELEASE_NOTES";
 
 let ensureSystemSettingReady: Promise<void> | null = null;
 async function ensureSystemSettingTable(): Promise<void> {
@@ -158,6 +164,47 @@ async function setSystemSetting(key: string, value: string | null): Promise<void
     update: { value },
     create: { key, value }
   });
+}
+
+function parseBool(value: string | null, fallback: boolean): boolean {
+  if (value === null) return fallback;
+  const v = value.trim().toLowerCase();
+  if (["true", "1", "yes", "y"].includes(v)) return true;
+  if (["false", "0", "no", "n"].includes(v)) return false;
+  return fallback;
+}
+
+function parseIntSetting(value: string | null, fallback: number): number {
+  if (value === null) return fallback;
+  const n = Number.parseInt(value, 10);
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+}
+
+async function getAppVersion(env: RequestContext["env"]) {
+  const [
+    latestVersion,
+    latestBuildNumber,
+    minSupportedBuildNumber,
+    updateRequired,
+    downloadUrl,
+    releaseNotes
+  ] = await Promise.all([
+    getSystemSetting(APP_LATEST_VERSION_KEY),
+    getSystemSetting(APP_LATEST_BUILD_NUMBER_KEY),
+    getSystemSetting(APP_MIN_SUPPORTED_BUILD_NUMBER_KEY),
+    getSystemSetting(APP_UPDATE_REQUIRED_KEY),
+    getSystemSetting(APP_DOWNLOAD_URL_KEY),
+    getSystemSetting(APP_RELEASE_NOTES_KEY)
+  ]);
+
+  return {
+    latestVersion: latestVersion ?? env.APP_LATEST_VERSION,
+    latestBuildNumber: parseIntSetting(latestBuildNumber, env.APP_LATEST_BUILD_NUMBER),
+    minSupportedBuildNumber: parseIntSetting(minSupportedBuildNumber, env.APP_MIN_SUPPORTED_BUILD_NUMBER),
+    updateRequired: parseBool(updateRequired, env.APP_UPDATE_REQUIRED),
+    downloadUrl: downloadUrl ?? env.APP_DOWNLOAD_URL,
+    releaseNotes: releaseNotes ?? env.APP_RELEASE_NOTES
+  };
 }
 
 async function assertReportsAccess(ctx: RequestContext) {
@@ -242,6 +289,7 @@ export const resolvers = {
       const logoUrl = await getSystemSetting(BRANDING_LOGO_KEY);
       return { logoUrl };
     },
+    appVersion: async (_: unknown, __: unknown, ctx: RequestContext) => getAppVersion(ctx.env),
     me: async (_: unknown, __: unknown, ctx: RequestContext) => {
       if (!ctx.user) return null;
       const u = await prisma.user.findUnique({
@@ -1164,6 +1212,30 @@ export const resolvers = {
       return { logoUrl };
     },
 
+    setAppVersion: async (_: unknown, args: { input: any }, ctx: RequestContext) => {
+      assertAnyRole(ctx, [RoleName.ADMIN]);
+      const input = args.input ?? {};
+      const latestVersion = String(input.latestVersion ?? "").trim();
+      const latestBuildNumber = Number(input.latestBuildNumber);
+      const minSupportedBuildNumber = Number(input.minSupportedBuildNumber);
+      const downloadUrl = String(input.downloadUrl ?? "").trim();
+      const releaseNotes = input.releaseNotes === undefined || input.releaseNotes === null ? null : String(input.releaseNotes).trim();
+      if (!latestVersion || !downloadUrl || !Number.isInteger(latestBuildNumber) || !Number.isInteger(minSupportedBuildNumber)) throw new Error("INVALID_INPUT");
+      if (latestBuildNumber < 0 || minSupportedBuildNumber < 0) throw new Error("INVALID_INPUT");
+      if (minSupportedBuildNumber > latestBuildNumber) throw new Error("INVALID_INPUT");
+
+      await Promise.all([
+        setSystemSetting(APP_LATEST_VERSION_KEY, latestVersion),
+        setSystemSetting(APP_LATEST_BUILD_NUMBER_KEY, String(latestBuildNumber)),
+        setSystemSetting(APP_MIN_SUPPORTED_BUILD_NUMBER_KEY, String(minSupportedBuildNumber)),
+        setSystemSetting(APP_UPDATE_REQUIRED_KEY, String(Boolean(input.updateRequired))),
+        setSystemSetting(APP_DOWNLOAD_URL_KEY, downloadUrl),
+        setSystemSetting(APP_RELEASE_NOTES_KEY, releaseNotes)
+      ]);
+      await logActivity(ctx, { module: "SYSTEM", action: "APP_VERSION_UPDATED", description: `Updated Android app version to ${latestVersion}+${latestBuildNumber}` });
+      return getAppVersion(ctx.env);
+    },
+
     createFeedback: async (_: unknown, args: { input: any }, ctx: RequestContext) => {
       assertAnyRole(ctx, [RoleName.CUSTOMER]);
       await ensureOrderTransferSchema();
@@ -1731,6 +1803,41 @@ export const resolvers = {
       }
 
       await logActivity(ctx, { module: "ORDERS", action: "ORDER_MESSAGE_SENT", description: `Staff messaged customer for order ${order.id}` });
+      return updated;
+    },
+
+    customerMessageOrder: async (_: unknown, args: { orderId: string; message: string }, ctx: RequestContext) => {
+      assertAnyRole(ctx, [RoleName.CUSTOMER]);
+      await ensureOrderTransferSchema();
+      const customer = await getCustomerForUserOrThrow(ctx.user!.userId);
+      const order = await prisma.order.findUnique({ where: { id: args.orderId }, include: { customer: true } });
+      if (!order) throw new Error("NOT_FOUND");
+      if (order.customerId !== customer.id) throw new Error("FORBIDDEN");
+
+      const message = String(args.message ?? "").trim();
+      if (!message) throw new Error("MESSAGE_REQUIRED");
+
+      const updated = await prisma.order.update({
+        where: { id: order.id },
+        data: { customerMessageAt: new Date(), customerMessageText: message },
+        include: orderInclude
+      });
+
+      const receiverId = order.staffMessageByUserId ?? order.staffCompletedByUserId ?? order.staffResponseByUserId ?? null;
+      if (receiverId) {
+        await prisma.notification.create({
+          data: {
+            title: "Customer reply",
+            message: `Order ${order.id}: ${message}`,
+            type: NotificationType.INFO,
+            senderId: ctx.user!.userId,
+            receiverId,
+            serviceCentreId: updated.serviceCentreId ?? null
+          }
+        });
+      }
+
+      await logActivity(ctx, { module: "ORDERS", action: "ORDER_CUSTOMER_MESSAGE", description: `Customer replied on order ${order.id}` });
       return updated;
     },
 

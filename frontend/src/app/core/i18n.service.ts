@@ -42,6 +42,7 @@ export class I18nService {
 
     // Common buttons / table text
     Cancel: { en: "Cancel", sw: "Ghairi" },
+    Confirm: { en: "Confirm", sw: "Thibitisha" },
     Save: { en: "Save", sw: "Hifadhi" },
     Create: { en: "Create", sw: "Tengeneza" },
     Delete: { en: "Delete", sw: "Futa" },
@@ -97,6 +98,7 @@ export class I18nService {
     Remove: { en: "Remove", sw: "Ondoa" },
     Activate: { en: "Activate", sw: "Washa" },
     "Remove product?": { en: "Remove product?", sw: "Ondoa bidhaa?" },
+    "Delete product?": { en: "Delete product?", sw: "Futa bidhaa?" },
     "This will hide the product from customers": { en: "This will hide the product from customers.", sw: "Hii itaficha bidhaa kwa wateja." },
     "Search...": { en: "Search...", sw: "Tafuta..." },
     "No products": { en: "No products", sw: "Hakuna bidhaa" },
@@ -281,6 +283,16 @@ export class I18nService {
     "Create user": { en: "Create user", sw: "Tengeneza mtumiaji" },
     "Update account information": { en: "Update account information", sw: "Sasisha taarifa za akaunti" },
     "Account details, duties, and activity": { en: "Account details, duties, and activity", sw: "Taarifa za akaunti, kazi, na rekodi" },
+    "Reset Password": { en: "Reset Password", sw: "Badilisha Nenosiri" },
+    Reset: { en: "Reset", sw: "Badilisha" },
+    "Saving...": { en: "Saving...", sw: "Inahifadhi..." },
+    "New password (min 6 chars)": { en: "New password (min 6 chars)", sw: "Nenosiri jipya (angalau herufi 6)" },
+    "Confirm password": { en: "Confirm password", sw: "Thibitisha nenosiri" },
+    "Password reset": { en: "Password reset", sw: "Nenosiri limebadilishwa" },
+    "Reset password for": { en: "Reset password for", sw: "Badilisha nenosiri la" },
+    "Yes, reset": { en: "Yes, reset", sw: "Ndiyo, badilisha" },
+    "Password too short (min 6).": { en: "Password too short (min 6).", sw: "Nenosiri ni fupi (angalau herufi 6)." },
+    "Passwords do not match.": { en: "Passwords do not match.", sw: "Manenosiri hayafanani." },
     "No duties": { en: "No duties", sw: "Hakuna kazi" },
     "No activity": { en: "No activity", sw: "Hakuna rekodi" },
 

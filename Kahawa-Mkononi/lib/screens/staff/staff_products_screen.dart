@@ -15,7 +15,7 @@ import '../../widgets/empty_view.dart';
 import '../../widgets/error_view.dart';
 import '../../widgets/loading_view.dart';
 
-enum _ProductAction { edit, deactivate, activate }
+enum _ProductAction { edit, delete, activate }
 
 class StaffProductsScreen extends ConsumerStatefulWidget {
   const StaffProductsScreen({super.key});
@@ -101,7 +101,7 @@ class _StaffProductsScreenState extends ConsumerState<StaffProductsScreen> {
                         itemBuilder: (_) => [
                           const PopupMenuItem(value: _ProductAction.edit, child: Text('Edit')),
                           if (p.isActive)
-                            const PopupMenuItem(value: _ProductAction.deactivate, child: Text('Deactivate'))
+                            const PopupMenuItem(value: _ProductAction.delete, child: Text('Delete'))
                           else
                             const PopupMenuItem(value: _ProductAction.activate, child: Text('Activate')),
                         ],
@@ -133,15 +133,15 @@ class _StaffProductsScreenState extends ConsumerState<StaffProductsScreen> {
           if (!mounted) return;
           messenger.showSnackBar(SnackBar(content: Text('Product updated: ${updated.name}')));
           return;
-        case _ProductAction.deactivate:
+        case _ProductAction.delete:
           final ok = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Deactivate product?'),
-              content: Text('Deactivate "${p.name}"? It will be hidden from customers.'),
+              title: const Text('Delete product?'),
+              content: Text('Delete "${p.name}"? It will be hidden from customers.'),
               actions: [
                 TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
-                ElevatedButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Deactivate')),
+                ElevatedButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Delete')),
               ],
             ),
           );
@@ -149,7 +149,7 @@ class _StaffProductsScreenState extends ConsumerState<StaffProductsScreen> {
           await ref.read(productAdminRepositoryProvider).deactivate(id: p.id);
           await ref.read(staffProductsProvider.notifier).reload();
           if (!mounted) return;
-          messenger.showSnackBar(const SnackBar(content: Text('Product deactivated')));
+          messenger.showSnackBar(const SnackBar(content: Text('Product deleted')));
           return;
         case _ProductAction.activate:
           await ref.read(productAdminRepositoryProvider).setActive(id: p.id, active: true);

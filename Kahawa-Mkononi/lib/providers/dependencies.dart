@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/api/auth_repository.dart';
 import '../services/api/auth_session.dart';
+import '../services/api/app_version_repository.dart';
 import '../services/api/catalog_repository.dart';
 import '../services/api/branding_repository.dart';
 import '../services/api/feedback_repository.dart';
@@ -33,6 +34,8 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(api: ref.watch(graphqlApiProvider), tokenStorage: ref.watch(tokenStorageProvider), session: ref.watch(authSessionProvider));
 });
 
+final appVersionRepositoryProvider = Provider<AppVersionRepository>((ref) => AppVersionRepository(ref.watch(graphqlApiProvider)));
+final appVersionProvider = FutureProvider<AppVersionInfo>((ref) => ref.watch(appVersionRepositoryProvider).appVersion());
 final catalogRepositoryProvider = Provider<CatalogRepository>((ref) => CatalogRepository(ref.watch(graphqlApiProvider)));
 final brandingRepositoryProvider = Provider<BrandingRepository>((ref) => BrandingRepository(ref.watch(graphqlApiProvider)));
 final orderRepositoryProvider = Provider<OrderRepository>((ref) => OrderRepository(ref.watch(graphqlApiProvider)));

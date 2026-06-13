@@ -1,7 +1,7 @@
 name: kahawa_mkononi_customer
 description: KAHAWA MKONONI Customer Portal (Flutter)
 publish_to: "none"
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -19,6 +19,7 @@ dependencies:
   http: ^1.2.2
   http_parser: ^4.0.2
   image_picker: ^1.2.2
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

@@ -139,11 +139,11 @@ export const typeDefs = /* GraphQL */ `
     createdAt: DateTime!
   }
 
-	  type Order {
-	    id: ID!
-	    customer: Customer!
-	    serviceCentre: ServiceCentre
-	    status: OrderStatus!
+		  type Order {
+		    id: ID!
+		    customer: Customer!
+		    serviceCentre: ServiceCentre
+		    status: OrderStatus!
 	    transferredAt: DateTime
 	    transferredFromServiceCentre: ServiceCentre
 	    transferredToServiceCentre: ServiceCentre
@@ -152,16 +152,18 @@ export const typeDefs = /* GraphQL */ `
 	    customerAcknowledgedAt: DateTime
 	    customerRejectedAt: DateTime
 	    customerRejectionReason: String
-	    staffResponseAt: DateTime
-	    staffResponseMessage: String
-	    staffMessageAt: DateTime
-	    staffMessageText: String
-	    items: [OrderItem!]!
-	    totalAmount: Decimal!
-	    currency: String!
-	    createdAt: DateTime!
-	    updatedAt: DateTime!
-	  }
+		    staffResponseAt: DateTime
+		    staffResponseMessage: String
+		    staffMessageAt: DateTime
+		    staffMessageText: String
+		    customerMessageAt: DateTime
+		    customerMessageText: String
+		    items: [OrderItem!]!
+		    totalAmount: Decimal!
+		    currency: String!
+		    createdAt: DateTime!
+		    updatedAt: DateTime!
+		  }
 
 	  type Feedback {
 	    id: ID!
@@ -676,6 +678,7 @@ export const typeDefs = /* GraphQL */ `
     me: User
     myDelegatedPermissions: [String!]!
     appBranding: AppBranding!
+    appVersion: AppVersion!
 
     customers(pagination: PaginationInput, search: String): CustomerPage!
     customer(id: ID!): Customer
@@ -729,6 +732,24 @@ export const typeDefs = /* GraphQL */ `
     logoUrl: String
   }
 
+  type AppVersion {
+    latestVersion: String!
+    latestBuildNumber: Int!
+    minSupportedBuildNumber: Int!
+    updateRequired: Boolean!
+    downloadUrl: String!
+    releaseNotes: String
+  }
+
+  input AppVersionInput {
+    latestVersion: String!
+    latestBuildNumber: Int!
+    minSupportedBuildNumber: Int!
+    updateRequired: Boolean!
+    downloadUrl: String!
+    releaseNotes: String
+  }
+
   type Mutation {
     login(input: LoginInput!): LoginPayload!
     refresh(refreshToken: String!): AuthTokens!
@@ -742,6 +763,7 @@ export const typeDefs = /* GraphQL */ `
     updateMyAccount(input: UpdateMyAccountInput!): User!
 
     setAppBranding(logoUrl: String): AppBranding!
+    setAppVersion(input: AppVersionInput!): AppVersion!
 
     createCustomer(input: CreateCustomerInput!): Customer!
     updateCustomer(id: ID!, input: UpdateCustomerInput!): Customer!
@@ -766,12 +788,13 @@ export const typeDefs = /* GraphQL */ `
     staffCompleteOrder(orderId: ID!): Order!
     acknowledgeOrder(orderId: ID!): Order!
     rejectOrder(orderId: ID!, reason: String!): Order!
-    staffRespondOrderRejection(orderId: ID!, message: String!): Order!
-    cancelMyOrder(orderId: ID!): Order!
-	    updateMyOrder(orderId: ID!, input: UpdateMyOrderInput!): Order!
-	    staffMessageOrder(orderId: ID!, message: String!): Order!
-	    transferOrder(orderId: ID!, serviceCentreId: ID!): Order!
-	    deleteOrder(orderId: ID!): Boolean!
+	    staffRespondOrderRejection(orderId: ID!, message: String!): Order!
+	    cancelMyOrder(orderId: ID!): Order!
+		    updateMyOrder(orderId: ID!, input: UpdateMyOrderInput!): Order!
+		    staffMessageOrder(orderId: ID!, message: String!): Order!
+		    customerMessageOrder(orderId: ID!, message: String!): Order!
+		    transferOrder(orderId: ID!, serviceCentreId: ID!): Order!
+		    deleteOrder(orderId: ID!): Boolean!
 
 	    createFeedback(input: CreateFeedbackInput!): Feedback!
 
