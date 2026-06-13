@@ -19,7 +19,6 @@ query Orders($status: OrderStatus, $serviceCentreId: ID) {
       staffCompletedAt customerAcknowledgedAt customerRejectedAt customerRejectionReason
 	      staffResponseAt staffResponseMessage
 	      staffMessageAt staffMessageText
-	      customerMessageAt customerMessageText
 	      serviceCentre { id centreName locationName phone status }
       items { id quantity unitPrice lineTotal product { id name description price currency isActive imageUrl } }
       totalAmount currency
@@ -46,7 +45,6 @@ mutation StaffComplete($orderId: ID!) {
     staffCompletedAt customerAcknowledgedAt customerRejectedAt customerRejectionReason
 	    staffResponseAt staffResponseMessage
 	    staffMessageAt staffMessageText
-	    customerMessageAt customerMessageText
 	    serviceCentre { id centreName locationName phone status }
     items { id quantity unitPrice lineTotal product { id name description price currency isActive imageUrl } }
     totalAmount currency
@@ -71,7 +69,6 @@ mutation StaffMessage($orderId: ID!, $message: String!) {
     staffCompletedAt customerAcknowledgedAt customerRejectedAt customerRejectionReason
 	    staffResponseAt staffResponseMessage
 	    staffMessageAt staffMessageText
-	    customerMessageAt customerMessageText
 	    serviceCentre { id centreName locationName phone status }
     items { id quantity unitPrice lineTotal product { id name description price currency isActive imageUrl } }
     totalAmount currency
@@ -96,7 +93,6 @@ mutation StaffRespond($orderId: ID!, $message: String!) {
     staffCompletedAt customerAcknowledgedAt customerRejectedAt customerRejectionReason
 	    staffResponseAt staffResponseMessage
 	    staffMessageAt staffMessageText
-	    customerMessageAt customerMessageText
 	    serviceCentre { id centreName locationName phone status }
     items { id quantity unitPrice lineTotal product { id name description price currency isActive imageUrl } }
     totalAmount currency
@@ -121,7 +117,6 @@ query MyOrders($status: OrderStatus) {
       staffCompletedAt customerAcknowledgedAt customerRejectedAt customerRejectionReason
 	      staffResponseAt staffResponseMessage
 	      staffMessageAt staffMessageText
-	      customerMessageAt customerMessageText
 	      serviceCentre { id centreName locationName phone status }
       items { id quantity unitPrice lineTotal product { id name description price currency isActive imageUrl } }
       totalAmount currency
@@ -147,7 +142,6 @@ mutation CreateOrder($input: CreateOrderInput!) {
     staffCompletedAt customerAcknowledgedAt customerRejectedAt customerRejectionReason
 	    staffResponseAt staffResponseMessage
 	    staffMessageAt staffMessageText
-	    customerMessageAt customerMessageText
 	    serviceCentre { id centreName locationName phone status }
     items { id quantity unitPrice lineTotal product { id name description price currency isActive imageUrl } }
     totalAmount currency
@@ -268,7 +262,6 @@ mutation Transfer($orderId: ID!, $serviceCentreId: ID!) {
     staffCompletedAt customerAcknowledgedAt customerRejectedAt customerRejectionReason
 	    staffResponseAt staffResponseMessage
 	    staffMessageAt staffMessageText
-	    customerMessageAt customerMessageText
 	    serviceCentre { id centreName locationName phone status }
     items { id quantity unitPrice lineTotal product { id name description price currency isActive imageUrl } }
     totalAmount currency
@@ -292,7 +285,6 @@ mutation CustomerMessage($orderId: ID!, $message: String!) {
     staffCompletedAt customerAcknowledgedAt customerRejectedAt customerRejectionReason
     staffResponseAt staffResponseMessage
     staffMessageAt staffMessageText
-    customerMessageAt customerMessageText
     serviceCentre { id centreName locationName phone status }
     items { id quantity unitPrice lineTotal product { id name description price currency isActive imageUrl } }
     totalAmount currency
