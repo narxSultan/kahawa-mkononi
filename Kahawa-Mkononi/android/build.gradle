@@ -1,0 +1,22 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(':app')
+
+    // Some transitive Flutter/Android plugins still compile with Java 8 bytecode.
+    // Newer JDKs warn that -source/-target 8 are obsolete; suppress the noise.
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs += ['-Xlint:-options']
+    }
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
