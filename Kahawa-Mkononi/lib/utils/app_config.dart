@@ -1,5 +1,5 @@
 class AppConfig {
-  static const String _defaultApiUrl = 'https://api.feedbackchap.com/graphql';
+  static const String _defaultApiUrl = 'https://api.kahawamkononi.feedbackchap.com/graphql';
 
   static String get defaultApiUrl {
     return _defaultApiUrl;
