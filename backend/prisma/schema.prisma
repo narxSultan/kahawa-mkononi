@@ -189,6 +189,9 @@ model Order {
   staffMessageByUser   User?    @relation("OrderStaffMessageBy", fields: [staffMessageByUserId], references: [id])
   staffMessageText     String?
 
+  customerMessageAt   DateTime?
+  customerMessageText String?
+
   items OrderItem[]
 
   feedback Feedback[]
