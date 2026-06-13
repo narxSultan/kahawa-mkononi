@@ -1,7 +1,7 @@
 class AppConfig {
   static const String _defaultApiUrl = 'https://api.kahawamkononi.feedbackchap.com/graphql';
-  static const String currentAppVersion = '0.1.1';
-  static const int currentBuildNumber = 2;
+  static const String currentAppVersion = '0.1.2';
+  static const int currentBuildNumber = 3;
 
   static String get defaultApiUrl {
     return _defaultApiUrl;

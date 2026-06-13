@@ -9,9 +9,9 @@ const EnvSchema = z.object({
   JWT_ACCESS_TTL: z.string().default("15m"),
   JWT_REFRESH_TTL: z.string().default("365d"),
   CORS_ORIGINS: z.string().default("http://localhost:4200"),
-  APP_LATEST_VERSION: z.string().default("0.1.1"),
-  APP_LATEST_BUILD_NUMBER: z.coerce.number().int().nonnegative().default(2),
-  APP_MIN_SUPPORTED_BUILD_NUMBER: z.coerce.number().int().nonnegative().default(2),
+  APP_LATEST_VERSION: z.string().default("0.1.2"),
+  APP_LATEST_BUILD_NUMBER: z.coerce.number().int().nonnegative().default(3),
+  APP_MIN_SUPPORTED_BUILD_NUMBER: z.coerce.number().int().nonnegative().default(3),
   APP_UPDATE_REQUIRED: z.coerce.boolean().default(true),
   APP_DOWNLOAD_URL: z.string().url().default("https://kahawamkononi.feedbackchap.com/kahawa-mkonon.apk"),
   APP_RELEASE_NOTES: z.string().default("New version available. Please download the latest APK.")

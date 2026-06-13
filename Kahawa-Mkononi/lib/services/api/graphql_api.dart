@@ -37,9 +37,31 @@ class GraphqlApi {
 
   ApiException _toApiException(OperationException ex) {
     final gql = ex.graphqlErrors.isNotEmpty ? ex.graphqlErrors.first.message : null;
-    if (gql != null && gql.trim().isNotEmpty) return ApiException(gql.trim(), gql.trim());
+    if (gql != null && gql.trim().isNotEmpty) {
+      final code = gql.trim();
+      return ApiException(code, _friendlyMessage(code));
+    }
     final link = ex.linkException?.toString() ?? 'NETWORK_ERROR';
     return ApiException('NETWORK_ERROR', link);
+  }
+
+  String _friendlyMessage(String code) {
+    switch (code) {
+      case 'INVALID_CREDENTIALS':
+        return 'Email, username/phone or password is incorrect.';
+      case 'ACCOUNT_ALREADY_EXISTS':
+        return 'An account with this email, username or phone already exists.';
+      case 'INVALID_INPUT':
+        return 'Please check the details and try again.';
+      case 'INVALID_PASSWORD':
+        return 'Password must be at least 6 characters.';
+      case 'CUSTOMER_ROLE_MISSING':
+        return 'Customer registration is not configured. Contact support.';
+      case 'NETWORK_ERROR':
+        return 'Network error. Check your internet connection and try again.';
+      default:
+        return code;
+    }
   }
 
   Future<AuthTokens> _refreshOrThrow() async {

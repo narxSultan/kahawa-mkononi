@@ -93,11 +93,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           TextFormField(
                             controller: _email,
                             keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
+                            decoration: const InputDecoration(labelText: 'Email, username or phone', prefixIcon: Icon(Icons.person_outline)),
                             validator: (v) {
                               final s = (v ?? '').trim();
-                              if (s.isEmpty) return 'Email is required';
-                              if (!s.contains('@')) return 'Enter a valid email';
+                              if (s.isEmpty) return 'Email, username or phone is required';
                               return null;
                             },
                           ),

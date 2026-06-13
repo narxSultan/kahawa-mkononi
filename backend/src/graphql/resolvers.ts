@@ -1043,8 +1043,18 @@ export const resolvers = {
 
   Mutation: {
     login: async (_: unknown, args: { input: { email: string; password: string } }, ctx: RequestContext) => {
-      const email = String(args.input.email ?? "").trim().toLowerCase();
-      const user = await prisma.user.findUnique({ where: { email }, include: { role: true, serviceCentre: true } });
+      const identifier = String(args.input.email ?? "").trim();
+      const normalizedIdentifier = identifier.toLowerCase();
+      const user = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email: normalizedIdentifier },
+            { username: identifier },
+            { phone: identifier }
+          ]
+        },
+        include: { role: true, serviceCentre: true }
+      });
       if (!user) throw new Error("INVALID_CREDENTIALS");
       assertUserNotDeleted(user);
       if (user.status !== UserStatus.ACTIVE) throw new Error("INVALID_CREDENTIALS");
